@@ -3,6 +3,7 @@ module Counterfeit
     extend ActiveSupport::Concern
     
     module ClassMethods
+      
       def has_counterfeit(attr, options={})
         options = options.with_indifferent_access
         
