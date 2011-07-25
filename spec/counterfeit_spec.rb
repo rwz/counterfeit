@@ -19,9 +19,11 @@ describe Item do
   end
   
   it 'should handle custom attribute names' do
-    item = Item.new(:money => 500)
-    item.custom_money_amount.should == 500_00
-    item.custom_money_currency.should == 'EUR'
+    Item.new(:money => 500).custom_money_amount.should == 500_00
+  end
+  
+  it 'should respect default currency attribute' do
+    Item.new.custom_money_currency.should == 'EUR'
   end
   
   it 'should work witn has_money alias' do
@@ -36,7 +38,7 @@ describe Item do
   it 'should automatically turn on google exchange on fail' do
     Money.google_saved_the_day = false
     Money.default_bank = Money::Bank::VariableExchange.instance
-    money = Money.new(50000, 'USD')
+    money = Money.new(500_00, 'USD')
     lambda do
       money.exchange_to('EUR')
     end.should_not raise_error
@@ -46,10 +48,20 @@ describe Item do
   
   it 'should use the google hack only once' do
     Money.default_bank = Money::Bank::VariableExchange.instance
-    money = Money.new(50000, 'USD')
+    money = Money.new(500_00, 'USD')
     money.bank.should be_kind_of(Money::Bank::VariableExchange)
     lambda do
       money.exchange_to('EUR')
     end.should raise_error(Money::Bank::UnknownRate)
+  end
+  
+  it 'should allow currency change' do
+    Money.default_currency = Money::Currency.new('USD')
+    item = Item.create
+    item.price_currency.should == 'USD'
+    item.update_attributes(:price => '100', :price_currency => 'RUB')
+    item.reload.price.should == Money.new(100_00, 'RUB')
+    item.save
+    item.reload.price_currency.should == 'RUB'
   end
 end

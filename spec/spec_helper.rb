@@ -23,7 +23,7 @@ require File.expand_path('../../lib/counterfeit', __FILE__)
 
 db_filename = 'counterfeit.sqlite3'
 
-File.delete(db_filename)
+File.delete(db_filename) if File.exists?(db_filename)
 
 active_record_configuration = { :adapter => 'sqlite3', :database => db_filename }
 
