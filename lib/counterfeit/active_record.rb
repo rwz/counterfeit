@@ -1,3 +1,5 @@
+require 'active_support'
+
 module Counterfeit
   module ActiveRecord
     extend ActiveSupport::Concern

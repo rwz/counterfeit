@@ -1,3 +1,5 @@
+require 'active_support/core_ext/module'
+
 # monkeypatching Money class to catch Money::Bank::UnknownRate error
 
 class Money  
